@@ -18,10 +18,30 @@ defmodule HelloPhoenix.Router do
 
     get "/", PageController, :index
     get "/hello", HelloController, :index
+    get "/hello/:messenger", HelloController, :show
+
+    resources "/users", UserController do
+      resources "posts", PostController
+    end
+
+    resources "/reviews", ReviewController
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", HelloPhoenix do
-  #   pipe_through :api
-  # end
+  scope "/admin", HelloPhoenix.Admin, as: :admin do
+    pipe_through :browser
+
+    resources "/images",  ImageController
+    resources "/reviews", ReviewController
+    resources "/users",   UserController
+  end
+
+  scope "/api", HelloPhoenix.Api, as: :api do
+    pipe_through :api
+
+    scope "/v1", V1, as: :v1 do
+      resources "/images",  ImageController
+      resources "/reviews", ReviewController
+      resources "/users",   UserController
+    end
+  end
 end
